@@ -26,7 +26,7 @@ More information on the registers used in the study is provided below.
   - Housing tenure
   - Socioeconomic indicators of neighborhoods
 - **Data Provider**: Statistics Sweden
-- **Link**: [Link to register details](https://example.com)
+- **Link**: [Link to register details](https://www.scb.se/en/)
 
 ---
 
@@ -46,7 +46,7 @@ More information on the registers used in the study is provided below.
 
 ## Real Estate Property Register (REPR)
 
-- **Swedish Name**: [Swedish name]
+- **Swedish Name**: [Fastighetsregistret]
 - **Description**: Objective housing characteristics for each dwelling: type of dwelling; price of dwelling; type of tenure; size; presence of stairs/elevator; floor; building and construction year; characteristics of the neighborhood: communal facilities (e.g., roads), green areas; date of each relocation
 - **Time Period**: 1908
 - **Key Variables**:
@@ -60,7 +60,7 @@ More information on the registers used in the study is provided below.
   - Neighborhood characteristics (communal facilities, green areas)
   - Date of each relocation
 - **Data Provider**: Swedish Mapping, Cadastral, and Land Registration Authority
-- **Link**: [Link to register details](https://example.com)
+- **Link**: [Link to register details](https://www.lantmateriet.se/sv/fastighet-och-mark/information-om-fastigheter/Fastighetsregistret/)
 
 ---
 
@@ -93,7 +93,7 @@ More information on the registers used in the study is provided below.
 
 ## Longitudinal Integrated Database for Health Insurance and Labour Market Studies (LISA)
 
-- **Swedish Name**: [Swedish name]
+- **Swedish Name**: [Longitudinell integrationsdatabas]
 - **Description**: Education level, income, social insurance
 - **Time Period**: 1990
 - **Key Variables**:
@@ -101,7 +101,7 @@ More information on the registers used in the study is provided below.
   - Income
   - Social insurance
 - **Data Provider**: Statistics Sweden
-- **Link**: [Link to register details](https://example.com)
+- **Link**: [Link to register details](https://www.scb.se/LISA/)
 
 ---
 
