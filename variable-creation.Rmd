@@ -9,7 +9,7 @@
 
 # Dataset Variable Explorer
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 # Load necessary libraries
 library(reactable)
 library(readxl)
@@ -72,3 +72,111 @@ reactable(
 
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(reactable)
+library(readxl)
+library(dplyr)
+library(htmltools)
+library(crosstalk)
+
+base_url <- "https://n-christie.github.io/register_reloc_age/appendix.html"
+
+# ---- Load and clean data ----
+metadata <- read_excel("tables/Dataset_variable_lists.xlsx") %>%
+  mutate(
+    Notes = ifelse(is.na(Notes), "", as.character(Notes)),
+    Notes = gsub("\\[partners\\]\\(#partners\\)",
+                 paste0("<a href='", base_url, "#partners'>partners</a>"),
+                 Notes),
+    Notes = gsub("\\[visits\\]\\(#visits\\)",
+                 paste0("<a href='", base_url, "#visits'>visits</a>"),
+                 Notes),
+    .key = paste0("row_", row_number())
+  )
+
+# ---- Table data (unchanged columns) ----
+tbl_df <- metadata %>%
+  select(.key, `Variable name`, `Description - SWE`, `Description - ENG`, Notes)
+
+# ---- Filter data (clean NA / blanks!) ----
+clean_cat <- function(x) {
+  x <- as.character(x)
+  x[is.na(x) | trimws(x) == ""] <- "(missing)"
+  x
+}
+
+filter_df <- metadata %>%
+  transmute(
+    .key,
+    `Dataset name`  = clean_cat(`Dataset name`),
+    Location        = clean_cat(Location),
+    Source          = clean_cat(Source),
+    `Delivery file` = clean_cat(`Delivery file`)
+  )
+
+# ---- Crosstalk shared data ----
+shared_tbl <- SharedData$new(tbl_df, key = ~.key, group = "var_explorer")
+shared_filters <- SharedData$new(filter_df, key = ~.key, group = "var_explorer")
+
+# ---- Dropdown menus (Popular Movies style) ----
+# IMPORTANT: multiple = TRUE
+# Clearing all selections = show ALL rows
+filters_ui <- div(
+  style = "
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  ",
+  filter_select("f_dataset",  "Dataset",       shared_filters, ~`Dataset name`,  multiple = TRUE),
+  #filter_select("f_location", "Location",      shared_filters, ~Location,        multiple = TRUE),
+  filter_select("f_source",   "Providor",        shared_filters, ~Source,          multiple = TRUE),
+  #filter_select("f_delivery", "Delivery file", shared_filters, ~`Delivery file`, multiple = TRUE)
+)
+
+# ---- Key → full-row lookup for details ----
+meta_list <- split(metadata, metadata$.key)
+
+# ---- Reactable (same appearance as before) ----
+tbl <- reactable(
+  shared_tbl,
+  searchable = TRUE,
+  pagination = TRUE,
+  defaultPageSize = 20,
+  highlight = TRUE,
+  bordered = TRUE,
+  striped = TRUE,
+  style = list(fontSize = "12px"),
+  columns = list(
+    .key = colDef(show = FALSE),
+    `Variable name` = colDef(name = "Variable Name"),
+    `Description - SWE` = colDef(name = "Description (SWE)"),
+    `Description - ENG` = colDef(name = "Description (ENG)"),
+    Notes = colDef(html = TRUE, name = "Notes")
+  ),
+  details = function(index) {
+    key <- shared_tbl$data()[index, ".key", drop = TRUE]
+    if (is.data.frame(key)) key <- key[[1]]
+    key <- as.character(key)
+
+    row_data <- meta_list[[key]]
+
+    tags$div(
+      style = "padding: 10px;",
+      tags$strong("Dataset name: "), row_data$`Dataset name`, tags$br(),
+      tags$strong("Dataset description: "), row_data$`Dataset description`, tags$br(),
+      tags$strong("Observations in Dataset: "), row_data$`Observations in Dataset`, tags$br(),
+      tags$strong("Location: "), row_data$Location, tags$br(),
+      tags$strong("Source: "), row_data$Source, tags$br(),
+      tags$strong("Delivery file: "), row_data$`Delivery file`, tags$br(),
+      tags$strong("Link: "),
+      tags$a(href = row_data$Link, target = "_blank", row_data$Link)
+    )
+  }
+)
+
+# ---- Render ----
+htmltools::browsable(htmltools::tagList(filters_ui, tbl))
+
+```
+```
