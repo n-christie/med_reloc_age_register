@@ -108,7 +108,7 @@ clean_cat <- function(x) {
 filter_df <- metadata %>%
   transmute(
     .key,
-    `Dataset name`  = clean_cat(`Dataset name`),
+    `Dataset name`  = clean_cat(`Dataset description`),
     Location        = clean_cat(Location),
     Source          = clean_cat(Source),
     `Delivery file` = clean_cat(`Delivery file`)
@@ -128,9 +128,9 @@ filters_ui <- div(
     gap: 12px;
     margin-bottom: 12px;
   ",
+  filter_select("f_source",   "Providor",        shared_filters, ~Source,          multiple = TRUE),
   filter_select("f_dataset",  "Dataset",       shared_filters, ~`Dataset name`,  multiple = TRUE),
   #filter_select("f_location", "Location",      shared_filters, ~Location,        multiple = TRUE),
-  filter_select("f_source",   "Providor",        shared_filters, ~Source,          multiple = TRUE),
   #filter_select("f_delivery", "Delivery file", shared_filters, ~`Delivery file`, multiple = TRUE)
 )
 
